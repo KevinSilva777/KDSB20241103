@@ -7,13 +7,13 @@ namespace KDSB20241103.Models
     {
         public Cliente()
         {
-            TelefonoClientes = new HashSet<TelefonoCliente>();
+            TelefonoClientes = new List<TelefonoCliente>();
         }
 
         public int IdCliente { get; set; }
         public string NombreCliente { get; set; } = null!;
         public DateTime? FechaRegistro { get; set; }
 
-        public virtual ICollection<TelefonoCliente> TelefonoClientes { get; set; }
+        public virtual IList<TelefonoCliente> TelefonoClientes { get; set; }
     }
 }
