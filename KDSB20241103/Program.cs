@@ -1,4 +1,10 @@
+using KDSB20241103.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<KDSB20241103DBContext>(opciones =>
+ opciones.UseSqlServer(builder.Configuration.GetConnectionString("Cnn")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
