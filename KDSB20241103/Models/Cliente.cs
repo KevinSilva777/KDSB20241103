@@ -12,6 +12,7 @@ namespace KDSB20241103.Models
 
         public int IdCliente { get; set; }
         public string NombreCliente { get; set; } = null!;
+        public DateTime? FechaRegistro { get; set; }
 
         public virtual ICollection<TelefonoCliente> TelefonoClientes { get; set; }
     }

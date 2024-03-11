@@ -23,8 +23,8 @@ namespace KDSB20241103.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseSqlServer("server=DESKTOP-U3NM1TE; database=KDSB20241103DB; integrated security=true;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("server=DESKTOP-U3NM1TE; database=KDSB20241103DB; integrated security=true;");
             }
         }
 
@@ -36,6 +36,8 @@ namespace KDSB20241103.Models
                     .HasName("PK__Cliente__D59466426F14597C");
 
                 entity.ToTable("Cliente");
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("date");
 
                 entity.Property(e => e.NombreCliente)
                     .HasMaxLength(100)
