@@ -100,11 +100,14 @@ namespace KDSB20241103.Controllers
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = await _context.Clientes
+                .Include(s => s.TelefonoCliente)
+                .FirstAsync(s => s.IdCliente == id);
             if (cliente == null)
             {
                 return NotFound();
             }
+            ViewBag.Accion = "Edit";
             return View(cliente);
         }
 
@@ -113,34 +116,68 @@ namespace KDSB20241103.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdCliente,NombreCliente,FechaRegistro")] Cliente cliente)
+        public async Task<IActionResult> Edit(int id, [Bind("IdCliente,NombreCliente,FechaRegistro,TelefonoCliente")] Cliente cliente)
         {
             if (id != cliente.IdCliente)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                // Obtener los datos de la base de datos que van a ser modificados
+                var facturaUpdate = await _context.Clientes
+                        .Include(s => s.TelefonoCliente)
+                        .FirstAsync(s => s.IdCliente == cliente.IdCliente);
+                facturaUpdate.NombreCliente = cliente.NombreCliente;
+                facturaUpdate.FechaRegistro = cliente.FechaRegistro;
+                
+                //facturaUpdate.Estado = proyecto.Estado;
+                // Obtener todos los detalles que seran nuevos y agregarlos a la base de datos
+                var detNew = cliente.TelefonoCliente.Where(s => s.IdCliente == 0);
+                foreach (var d in detNew)
                 {
-                    _context.Update(cliente);
-                    await _context.SaveChangesAsync();
+                    facturaUpdate.TelefonoCliente.Add(d);
                 }
-                catch (DbUpdateConcurrencyException)
+                // Obtener todos los detalles que seran modificados y actualizar a la base de datos
+                var detUpdate = cliente.TelefonoCliente.Where(s => s.IdCliente > 0);
+                foreach (var d in detUpdate)
                 {
-                    if (!ClienteExists(cliente.IdCliente))
+                    var det = facturaUpdate.TelefonoCliente.FirstOrDefault(s => s.IdCliente == d.IdCliente);
+                    det.NumeroTelefono = d.NumeroTelefono;
+                    
+                    
+                }
+                // Obtener todos los detalles que seran eliminados y actualizar a la base de datos
+                var delDet = cliente.TelefonoCliente.Where(s => s.IdCliente < 0).ToList();
+                if (delDet != null && delDet.Count > 0)
+                {
+                    foreach (var d in delDet)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        d.IdCliente = d.IdCliente * -1;
+                        var det = facturaUpdate.TelefonoCliente.FirstOrDefault(s => s.IdCliente == d.IdCliente);
+                        _context.Remove(det);
+                        // facturaUpdate.DetFacturaVenta.Remove(det);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                // Aplicar esos cambios a la base de datos
+
+
+                _context.Update(facturaUpdate);
+                await _context.SaveChangesAsync();
             }
-            return View(cliente);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClienteExists(cliente.IdCliente))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Clientes/Delete/5
