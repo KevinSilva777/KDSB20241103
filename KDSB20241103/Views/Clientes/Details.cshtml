@@ -23,6 +23,9 @@
             @Html.DisplayFor(model => model.FechaRegistro)
         </dd>
     </dl>
+    <div class="row row-cols-md-12">
+        @await Html.PartialAsync("_DetTelefonoCliente", Model.TelefonoCliente)
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.IdCliente">Edit</a> |

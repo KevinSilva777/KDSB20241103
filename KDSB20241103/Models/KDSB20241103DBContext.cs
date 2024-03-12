@@ -56,7 +56,7 @@ namespace KDSB20241103.Models
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.IdClienteNavigation)
-                    .WithMany(p => p.TelefonoClientes)
+                    .WithMany(p => p.TelefonoCliente)
                     .HasForeignKey(d => d.IdCliente)
                     .HasConstraintName("FK__TelefonoC__IdCli__398D8EEE");
             });

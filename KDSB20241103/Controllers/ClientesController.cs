@@ -35,19 +35,28 @@ namespace KDSB20241103.Controllers
             }
 
             var cliente = await _context.Clientes
+                .Include(s => s.TelefonoCliente)
                 .FirstOrDefaultAsync(m => m.IdCliente == id);
             if (cliente == null)
             {
                 return NotFound();
             }
-
+            ViewBag.Accion = "Details";
             return View(cliente);
         }
 
         // GET: Clientes/Create
         public IActionResult Create()
         {
-            return View();
+            var cliente = new Cliente();
+            cliente.FechaRegistro = DateTime.Now;
+            cliente.TelefonoCliente = new List<TelefonoCliente>();
+            cliente.TelefonoCliente.Add(new TelefonoCliente
+            {
+
+            });
+            ViewBag.Accion = "Create";
+            return View(cliente);
         }
 
         // POST: Clientes/Create
@@ -55,17 +64,34 @@ namespace KDSB20241103.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdCliente,NombreCliente,FechaRegistro")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("IdCliente,NombreCliente,FechaRegistro,TelefonoCliente")] Cliente cliente)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(cliente);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(cliente);
+            _context.Add(cliente);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+        [HttpPost]
+        public ActionResult AgregarDetalles([Bind("IdCliente,NombreCliente,FechaRegistro,TelefonoCliente")] Cliente cliente, string accion)
+        {
+            cliente.TelefonoCliente.Add(new TelefonoCliente { });
+            ViewBag.Accion = accion;
+            return View(accion, cliente);
+        }
+        public ActionResult EliminarDetalles([Bind("IdCliente,NombreCliente,FechaRegistro,TelefonoCliente")] Cliente cliente, int index, string accion)
+        {
+            var det = cliente.TelefonoCliente[index];
+            if (accion == "Edit" && det.IdCliente > 0)
+            {
+                det.IdCliente = det.IdCliente * -1;
+            }
+            else
+            {
+                cliente.TelefonoCliente.RemoveAt(index);
+            }
 
+            ViewBag.Accion = accion;
+            return View(accion, cliente);
+        }
         // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -126,12 +152,13 @@ namespace KDSB20241103.Controllers
             }
 
             var cliente = await _context.Clientes
+                .Include(s => s.TelefonoCliente)
                 .FirstOrDefaultAsync(m => m.IdCliente == id);
             if (cliente == null)
             {
                 return NotFound();
             }
-
+            ViewBag.Accion = "Delete";
             return View(cliente);
         }
 

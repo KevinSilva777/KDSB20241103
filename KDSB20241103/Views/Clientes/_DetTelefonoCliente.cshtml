@@ -1,0 +1,67 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<TelefonoCliente>
+
+<input type="hidden" name="accion" value="@ViewBag.Accion" />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NumeroTelefono)
+            </th>
+
+            <th>
+                @if (ViewBag.Accion == "Create" || ViewBag.Accion == "Edit")
+                {
+                    <button type="submit" class="btn btn-primary" formaction="@Url.Action("AgregarDetalles")">Agregar</button>
+                }
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = -1;
+        }
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                index++;
+                <tr>
+                    <td>
+                        @if (item.IdTelefono > -1)
+                        {
+                            <input type="hidden" value="@item.IdTelefono" name="TelefonoCliente[@index].IdTelefono">
+                            <input type="hidden" value="@item.IdCliente" name="TelefonoCliente[@index].IdCliente">
+                            <input class="form-control" type="text" name="TelefonoCliente[@index].NumeroTelefono" value="@item.NumeroTelefono">
+                        }
+                        else
+                        {
+                            <input type="hidden" value="@item.IdTelefono" name="TelefonoCliente[@index].IdTelefono">
+                            <input type="hidden" value="@item.IdCliente" name="TelefonoCliente[@index].IdCliente">
+                            <input type="hidden" name="TelefonoCliente[@index].NumeroTelefono" value="@item.NumeroTelefono">
+                        }
+                    </td>
+
+                    <td>
+                        @if (ViewBag.Accion == "Create" || ViewBag.Accion == "Edit")
+                        {
+                            <button name="index" value="@index" class="btn btn-primary" type="submit" formaction="@Url.Action("EliminarDetalles")">Eliminar</button>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (ViewBag.Accion == "Details" || ViewBag.Accion == "Delete")
+{
+    <script>
+        const readOnlyInputs = document.querySelectorAll("input[data-readonly]");
+        readOnlyInputs.forEach(input => {
+            input.setAttribute("readonly", true);
+        });
+    </script>
+}
+

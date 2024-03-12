@@ -24,7 +24,9 @@
             @Html.DisplayFor(model => model.FechaRegistro)
         </dd>
     </dl>
-    
+    <div class="row row-cols-md-12">
+        @await Html.PartialAsync("_DetTelefonoCliente", Model.TelefonoCliente)
+    </div>
     <form asp-action="Delete">
         <input type="hidden" asp-for="IdCliente" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
