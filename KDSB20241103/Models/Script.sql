@@ -10,7 +10,7 @@ GO
 CREATE TABLE Cliente (
     IdCliente INT PRIMARY KEY IDENTITY(1,1),
     NombreCliente VARCHAR(100) NOT NULL,
-    FechaRegistro date NOT NULL
+    FechaRegistro DateTime NOT NULL
 );
 GO
 
